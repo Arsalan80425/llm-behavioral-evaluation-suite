@@ -1,0 +1,32 @@
+[
+  {
+    "model": "llama-3.3-70b-versatile",
+    "status": "\u2705 WORKING",
+    "response": "OK"
+  },
+  {
+    "model": "llama-3.1-8b-instant",
+    "status": "\u2705 WORKING",
+    "response": "OK."
+  },
+  {
+    "model": "qwen/qwen3-32b",
+    "status": "\u2705 WORKING",
+    "response": "<think>\nOkay, the user wants me to just"
+  },
+  {
+    "model": "moonshotai/kimi-k2-instruct-0905",
+    "status": "\u2705 WORKING",
+    "response": "OK"
+  },
+  {
+    "model": "openai/gpt-oss-120b",
+    "status": "\u2705 WORKING",
+    "response": ""
+  },
+  {
+    "model": "meta-llama/llama-guard-4-12b",
+    "status": "\u2705 WORKING",
+    "response": "safe"
+  }
+]

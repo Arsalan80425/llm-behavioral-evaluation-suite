@@ -1,0 +1,39 @@
+{
+    "groq": {
+        "api_keys": [
+            "YOUR_GROQ_API_KEY_1",
+            "YOUR_GROQ_API_KEY_2"
+        ],
+        "models": [
+            "llama-3.3-70b-versatile",
+            "llama-3.1-8b-instant",
+            "qwen/qwen3-32b",
+            "moonshotai/kimi-k2-instruct-0905",
+            "openai/gpt-oss-120b",
+            "meta-llama/llama-guard-4-12b"
+        ]
+    },
+    "ollama": {
+        "models": [
+            "llama3",
+            "mistral",
+            "phi3",
+            "qwen2.5",
+            "deepseek-r1:8b"
+        ]
+    },
+    "default_provider": "groq",
+    "_model_notes": {
+        "llama-3.3-70b-versatile": "Meta Llama 3.3 70B - Best quality",
+        "llama-3.1-8b-instant": "Meta Llama 3.1 8B - Fast",
+        "qwen/qwen3-32b": "Alibaba Qwen 3 32B - Strong reasoning (Preview)",
+        "moonshotai/kimi-k2-instruct-0905": "Moonshot Kimi K2 - Chinese AI (Preview)",
+        "openai/gpt-oss-120b": "OpenAI GPT OSS 120B - Largest model",
+        "meta-llama/llama-guard-4-12b": "Safety-focused for refusal testing",
+        "_ollama_notes": {
+            "phi3": "Microsoft Phi-3 3.8B",
+            "qwen2.5": "Alibaba Qwen 2.5",
+            "deepseek-r1:8b": "DeepSeek R1 reasoning model"
+        }
+    }
+}
