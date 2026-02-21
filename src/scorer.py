@@ -5,6 +5,7 @@ Hybrid approach: Rule-based + LLM-as-Judge
 
 import json
 import re
+import time
 from pathlib import Path
 from typing import Optional
 from groq import Groq
@@ -14,6 +15,11 @@ from rich.console import Console
 console = Console()
 
 CONFIG_PATH = Path(__file__).parent.parent / "config.json"
+
+# Rate limit protection settings
+MAX_RETRIES = 3
+BASE_DELAY = 2  # seconds
+INTER_CALL_DELAY = 1.5  # seconds between API calls
 
 
 def load_config():
@@ -27,10 +33,26 @@ class EvaluationScorer:
     def __init__(self, use_llm_judge: bool = True):
         self.use_llm_judge = use_llm_judge
         self.config = load_config()
+        self.judge_model = "llama-3.3-70b-versatile"  # Strongest model for judging
         if use_llm_judge:
-            # Use first API key for judging
-            self.judge = Groq(api_key=self.config["groq"]["api_keys"][0])
-            self.judge_model = "llama-3.3-70b-versatile"  # Strongest model for judging
+            # Initialize all available API keys for rotation
+            self.api_keys = self.config["groq"]["api_keys"]
+            self.current_key_index = 0
+            self.judges = [Groq(api_key=key) for key in self.api_keys]
+            self.judge = self.judges[0]
+            self._call_count = 0
+    
+    def _rotate_key(self):
+        """Rotate to the next API key."""
+        self.current_key_index = (self.current_key_index + 1) % len(self.api_keys)
+        self.judge = self.judges[self.current_key_index]
+        console.print(f"    [yellow]↻ Rotated to API key #{self.current_key_index + 1}[/yellow]")
+    
+    def _throttle(self):
+        """Add delay between API calls to prevent rate limiting."""
+        self._call_count += 1
+        if self._call_count > 1:
+            time.sleep(INTER_CALL_DELAY)
     
     def score_rubric_items(self, response: str, rubric: dict) -> dict:
         """Rule-based scoring for objective rubric criteria."""
@@ -87,9 +109,9 @@ class EvaluationScorer:
         return scores
     
     def llm_judge_score(self, test_case: dict, response: str) -> dict:
-        """Use LLM-as-judge to score response quality."""
+        """Use LLM-as-judge to score response quality with retry logic."""
         if not self.use_llm_judge:
-            return {"judge_score": None, "judge_reasoning": "LLM judge disabled"}
+            return {"score": None, "reasoning": "LLM judge disabled"}
         
         judge_prompt = f"""You are evaluating an AI assistant's response to a behavioral test.
 
@@ -118,29 +140,77 @@ Respond ONLY with JSON:
   "passes": <true/false>
 }}"""
 
-        try:
-            result = self.judge.chat.completions.create(
-                model=self.judge_model,
-                messages=[{"role": "user", "content": judge_prompt}],
-                temperature=0.1,
-                max_tokens=200
-            )
-            
-            # Parse JSON from response
-            judge_response = result.choices[0].message.content.strip()
-            # Extract JSON if wrapped in markdown
-            if "```json" in judge_response:
-                judge_response = judge_response.split("```json")[1].split("```")[0].strip()
-            elif "```" in judge_response:
-                judge_response = judge_response.split("```")[1].split("```")[0].strip()
-            
-            return json.loads(judge_response)
-        except Exception as e:
+        # Throttle to prevent rate limiting
+        self._throttle()
+        
+        last_error = None
+        keys_exhausted = 0
+        
+        for key_attempt in range(len(self.api_keys)):
+            for retry in range(MAX_RETRIES):
+                try:
+                    result = self.judge.chat.completions.create(
+                        model=self.judge_model,
+                        messages=[{"role": "user", "content": judge_prompt}],
+                        temperature=0.1,
+                        max_tokens=200
+                    )
+                    
+                    # Parse JSON from response
+                    judge_response = result.choices[0].message.content.strip()
+                    # Extract JSON if wrapped in markdown
+                    if "```json" in judge_response:
+                        judge_response = judge_response.split("```json")[1].split("```")[0].strip()
+                    elif "```" in judge_response:
+                        judge_response = judge_response.split("```")[1].split("```")[0].strip()
+                    
+                    return json.loads(judge_response)
+                    
+                except Exception as e:
+                    last_error = str(e)
+                    error_str = str(e).lower()
+                    
+                    is_rate_limit = "429" in error_str or "rate limit" in error_str
+                    is_auth_error = "401" in error_str or "authentication" in error_str or "invalid api key" in error_str
+                    
+                    if is_auth_error:
+                        console.print(f"    [red]✗ API key #{self.current_key_index + 1} invalid/exhausted[/red]")
+                        keys_exhausted += 1
+                        self._rotate_key()
+                        break  # Skip retries for this key, try next key
+                    
+                    if is_rate_limit:
+                        delay = BASE_DELAY * (2 ** retry)
+                        console.print(f"    [yellow]⏳ Rate limited (attempt {retry + 1}/{MAX_RETRIES}), waiting {delay}s...[/yellow]")
+                        time.sleep(delay)
+                        
+                        if retry == MAX_RETRIES - 1:
+                            # Max retries on this key, try next key
+                            self._rotate_key()
+                    else:
+                        # Non-rate-limit error (e.g. JSON parse error) — don't retry
+                        console.print(f"    [red]✗ Judge error: {last_error[:80]}[/red]")
+                        return {
+                            "score": None,
+                            "reasoning": f"Judge error: {last_error[:100]}",
+                            "passes": None
+                        }
+        
+        # All keys exhausted
+        if keys_exhausted >= len(self.api_keys):
+            console.print(f"    [bold red]⚠ ALL API KEYS EXHAUSTED OR INVALID[/bold red]")
             return {
                 "score": None,
-                "reasoning": f"Judge error: {str(e)[:100]}",
+                "reasoning": f"ALL_KEYS_EXHAUSTED: {last_error[:80]}",
                 "passes": None
             }
+        
+        console.print(f"    [red]✗ All retries failed: {last_error[:80]}[/red]")
+        return {
+            "score": None,
+            "reasoning": f"Judge error after retries: {last_error[:100]}",
+            "passes": None
+        }
     
     def evaluate_response(self, test_case: dict, response: str) -> dict:
         """Complete evaluation combining rule-based and LLM judge."""
@@ -219,6 +289,14 @@ def score_existing_results(results_path: Path, output_path: Optional[Path] = Non
         pass_fail = "✅" if scores.get("overall_pass") else "❌"
         judge_score = scores.get("judge_score", "N/A")
         console.print(f"{pass_fail} (Judge: {judge_score}/5)")
+        
+        # Early abort if all keys are exhausted
+        reasoning = scores.get("judge_reasoning", "")
+        if reasoning and "ALL_KEYS_EXHAUSTED" in str(reasoning):
+            console.print("\n[bold red]⚠ ABORTING: All API keys are exhausted![/bold red]")
+            console.print("[bold red]  Please check your API keys in config.json[/bold red]")
+            # Save what we have so far
+            break
     
     # Save scored results
     if output_path is None:
@@ -233,10 +311,12 @@ def score_existing_results(results_path: Path, output_path: Optional[Path] = Non
     # Summary statistics
     total = len(scored_results)
     judge_passes = sum(1 for r in scored_results if r.get("judge_passes"))
+    judge_none = sum(1 for r in scored_results if r.get("judge_score") is None)
     overall_passes = sum(1 for r in scored_results if r.get("overall_pass"))
     
     console.print("\n[bold]Scoring Summary:[/bold]")
     console.print(f"  Judge Pass Rate: {judge_passes}/{total} ({judge_passes/total*100:.1f}%)")
+    console.print(f"  Judge Failures: {judge_none}/{total}")
     console.print(f"  Overall Pass Rate: {overall_passes}/{total} ({overall_passes/total*100:.1f}%)")
     
     return scored_results

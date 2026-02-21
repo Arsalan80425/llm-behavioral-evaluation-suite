@@ -1,9 +1,14 @@
 """
 Batch score all model results (baseline + improved) across all model directories.
-Uses the fixed scorer with correct overall_pass logic and context poisoning rules.
+Uses the fixed scorer with retry logic, API key rotation, and rate limit protection.
+
+Usage:
+  python batch_score_all.py          # Score new files only
+  python batch_score_all.py --force  # Re-score ALL files (overwrites existing scored files)
 """
 
 import sys
+import json
 from pathlib import Path
 
 # Add project root to path
@@ -23,17 +28,48 @@ MODEL_DIRS = [
     "phi3",
 ]
 
+
+def check_judge_failures(scored_file):
+    """Check how many judge failures exist in a scored file."""
+    total = 0
+    failures = 0
+    with open(scored_file, 'r', encoding='utf-8') as f:
+        for line in f:
+            if line.strip():
+                record = json.loads(line)
+                total += 1
+                if record.get('judge_score') is None:
+                    failures += 1
+    return total, failures
+
+
 def main():
+    force = "--force" in sys.argv
+    
+    if force:
+        print("🔄 FORCE MODE: Re-scoring all files (overwriting existing)")
+    else:
+        print("📋 Normal mode: Scoring new files only")
+    
     total_scored = 0
+    total_skipped = 0
     errors = []
+    keys_exhausted = False
     
     for model_dir in MODEL_DIRS:
+        if keys_exhausted:
+            print(f"\n⚠️  Skipping {model_dir} - API keys exhausted")
+            continue
+            
         model_path = RESULTS_DIR / model_dir
         if not model_path.exists():
             print(f"⚠️  Skipping {model_dir} - not found")
             continue
         
         for prompt_type in ["baseline", "improved"]:
+            if keys_exhausted:
+                break
+                
             jsonl_files = list(model_path.glob(f"*_{prompt_type}.jsonl"))
             # Skip already-scored files
             jsonl_files = [f for f in jsonl_files if not f.name.startswith("scored_")]
@@ -46,11 +82,22 @@ def main():
             input_file = sorted(jsonl_files)[-1]
             output_file = input_file.parent / f"scored_{input_file.name}"
             
-            # Skip if already scored
-            if output_file.exists():
-                print(f"⏭️  Already scored: {output_file.name}")
-                total_scored += 1
-                continue
+            # Check if already scored and whether it needs re-scoring
+            if output_file.exists() and not force:
+                total, failures = check_judge_failures(output_file)
+                if failures == 0:
+                    print(f"⏭️  Already scored (0 failures): {output_file.name}")
+                    total_skipped += 1
+                    continue
+                else:
+                    print(f"🔁 Re-scoring (has {failures}/{total} judge failures): {output_file.name}")
+            elif output_file.exists() and force:
+                total, failures = check_judge_failures(output_file)
+                if failures == 0:
+                    print(f"⏭️  Skipping (already has 0 failures): {output_file.name}")
+                    total_skipped += 1
+                    continue
+                print(f"🔄 Force re-scoring: {output_file.name} ({failures}/{total} failures)")
             
             print(f"\n{'='*60}")
             print(f"Scoring: {model_dir} / {prompt_type}")
@@ -59,8 +106,18 @@ def main():
             print(f"{'='*60}")
             
             try:
-                score_existing_results(input_file, output_file)
+                scored_results = score_existing_results(input_file, output_file)
                 total_scored += 1
+                
+                # Check for key exhaustion
+                for r in scored_results:
+                    reasoning = r.get("judge_reasoning", "")
+                    if reasoning and "ALL_KEYS_EXHAUSTED" in str(reasoning):
+                        keys_exhausted = True
+                        print("\n⚠️  API KEYS EXHAUSTED! Stopping batch scoring.")
+                        print("   Please check/update your API keys in config.json")
+                        break
+                        
             except Exception as e:
                 print(f"❌ Error scoring {input_file}: {e}")
                 errors.append((str(input_file), str(e)))
@@ -69,6 +126,9 @@ def main():
     print(f"BATCH SCORING COMPLETE")
     print(f"{'='*60}")
     print(f"  Scored: {total_scored} files")
+    print(f"  Skipped: {total_skipped} files (already OK)")
+    if keys_exhausted:
+        print(f"  ⚠️  API Keys: EXHAUSTED - some files may not have been scored")
     if errors:
         print(f"  Errors: {len(errors)}")
         for path, err in errors:
@@ -76,8 +136,9 @@ def main():
     else:
         print(f"  Errors: None ✅")
     
-    print(f"\nTo review all results:")
-    print(f"  python human_review.py results/<model_dir>/scored_<file>.jsonl")
+    print(f"\nNext steps:")
+    print(f"  1. python auto_human_review.py  (re-run auto review)")
+    print(f"  2. python generate_dashboard_data.py  (regenerate dashboard)")
 
 
 if __name__ == "__main__":
