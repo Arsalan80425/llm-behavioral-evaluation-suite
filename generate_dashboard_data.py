@@ -101,19 +101,18 @@ def main():
                     response = response[:500] + '...'
                 
                 # Get judge score if available (from scored files or inline)
-                score = record.get('judge_score', record.get('score', None))
-                passes = record.get('judge_passes', record.get('passes', None))
+                # Prefer human review score over judge score
+                score = record.get('human_score') or record.get('judge_score', record.get('score', None))
+                passes = record.get('human_passes') if record.get('human_reviewed') else record.get('judge_passes', record.get('passes', None))
                 
-                # Default scoring based on content analysis
-                if score is None:
-                    # Simple heuristic: assume improved prompts perform better
-                    score = 4 if prompt_type == 'improved' else 2
-                    passes = prompt_type == 'improved'
+                # Don't fabricate scores - leave as None if not scored
                 
                 test_cases[test_id]['models'][model_id][prompt_type] = {
                     'response': response.replace('\\n', '\n').replace('"', '\\"'),
-                    'score': score if score else 3,
-                    'pass': passes if passes is not None else (score >= 3 if score else True)
+                    'score': score,
+                    'pass': passes,
+                    'human_reviewed': record.get('human_reviewed', False),
+                    'human_notes': record.get('human_notes', '')
                 }
     
     # Convert to list and sort by category
