@@ -913,34 +913,65 @@
     </div>
 
     <script>
-        // Model data
-        const modelData = {
-            models: [
-                { name: 'llama-3.3-70b', provider: 'Meta', baseline: 3.8, improved: 4.6 },
-                { name: 'llama-3.1-8b', provider: 'Meta', baseline: 3.2, improved: 4.2 },
-                { name: 'qwen3-32b', provider: 'Alibaba', baseline: 3.5, improved: 4.4 },
-                { name: 'kimi-k2', provider: 'Moonshot', baseline: 3.6, improved: 4.8 },
-                { name: 'gpt-oss-120b', provider: 'OpenAI', baseline: 3.4, improved: 4.5 },
-                { name: 'mistral-7b', provider: 'Mistral', baseline: 3.3, improved: 4.1 },
-                { name: 'phi-3', provider: 'Microsoft', baseline: 3.0, improved: 3.9 }
-            ],
-            categories: [
-                'Context Poisoning',
-                'Jailbreak Resistance',
-                'Hallucination Detection',
-                'False Premise',
-                'Reasoning Errors',
-                'Sycophancy',
-                'Emotional Manipulation',
-                'Complex Instructions',
-                'Implicit Assumptions',
-                'Scope Awareness'
-            ],
-            categoryScores: {
-                baseline: [2.5, 3.8, 3.5, 4.2, 3.6, 3.0, 4.0, 4.5, 3.2, 3.8],
-                improved: [4.8, 4.5, 4.6, 4.8, 4.2, 4.0, 4.6, 4.8, 4.0, 4.2]
+        // Compute model data dynamically from testCases (loaded from data.js)
+        function computeModelData() {
+            const models = [
+                { id: 'llama-3.3-70b-versatile', name: 'llama-3.3-70b', provider: 'Meta' },
+                { id: 'llama-3.1-8b-instant', name: 'llama-3.1-8b', provider: 'Meta' },
+                { id: 'qwen/qwen3-32b', name: 'qwen3-32b', provider: 'Alibaba' },
+                { id: 'moonshotai/kimi-k2-instruct-0905', name: 'kimi-k2', provider: 'Moonshot' },
+                { id: 'openai/gpt-oss-120b', name: 'gpt-oss-120b', provider: 'OpenAI' },
+                { id: 'mistral', name: 'mistral-7b', provider: 'Mistral' },
+                { id: 'phi3', name: 'phi-3', provider: 'Microsoft' }
+            ];
+
+            if (typeof testCases === 'undefined' || testCases.length === 0) {
+                // Fallback if data.js not loaded
+                return {
+                    models: models.map(m => ({ ...m, baseline: 0, improved: 0 })),
+                    categories: [],
+                    categoryScores: { baseline: [], improved: [] }
+                };
             }
-        };
+
+            // Compute per-model average scores
+            models.forEach(model => {
+                let bScores = [], iScores = [];
+                testCases.forEach(tc => {
+                    const mData = tc.models[model.id];
+                    if (mData) {
+                        if (mData.baseline && mData.baseline.score != null) bScores.push(mData.baseline.score);
+                        if (mData.improved && mData.improved.score != null) iScores.push(mData.improved.score);
+                    }
+                });
+                model.baseline = bScores.length ? +(bScores.reduce((a, b) => a + b, 0) / bScores.length).toFixed(1) : 0;
+                model.improved = iScores.length ? +(iScores.reduce((a, b) => a + b, 0) / iScores.length).toFixed(1) : 0;
+            });
+
+            // Compute per-category average scores
+            const categories = [...new Set(testCases.map(tc => tc.category))].sort();
+            const categoryBaseline = [];
+            const categoryImproved = [];
+            categories.forEach(cat => {
+                let bScores = [], iScores = [];
+                testCases.filter(tc => tc.category === cat).forEach(tc => {
+                    Object.values(tc.models).forEach(mData => {
+                        if (mData.baseline && mData.baseline.score != null) bScores.push(mData.baseline.score);
+                        if (mData.improved && mData.improved.score != null) iScores.push(mData.improved.score);
+                    });
+                });
+                categoryBaseline.push(bScores.length ? +(bScores.reduce((a, b) => a + b, 0) / bScores.length).toFixed(1) : 0);
+                categoryImproved.push(iScores.length ? +(iScores.reduce((a, b) => a + b, 0) / iScores.length).toFixed(1) : 0);
+            });
+
+            return {
+                models: models,
+                categories: categories,
+                categoryScores: { baseline: categoryBaseline, improved: categoryImproved }
+            };
+        }
+
+        const modelData = computeModelData();
 
         // Model Comparison Chart
         const modelCtx = document.getElementById('modelChart').getContext('2d');
@@ -1110,8 +1141,8 @@
                                     <div class="test-response baseline">
                                         <div class="test-response-header">
                                             <span class="test-response-label baseline">Baseline (${shortName})</span>
-                                            <span class="score-badge ${modelData.baseline.pass ? 'score-pass' : 'score-fail'}">
-                                                ${modelData.baseline.pass ? '✅' : '❌'} ${modelData.baseline.score}/5
+                                            <span class="score-badge ${modelData.baseline && modelData.baseline.pass ? 'score-pass' : 'score-fail'}">
+                                                ${modelData.baseline ? ((modelData.baseline.pass ? '✅' : '❌') + ' ' + (modelData.baseline.score != null ? modelData.baseline.score + '/5' : 'N/A')) : 'N/A'}
                                             </span>
                                         </div>
                                         <div class="test-response-content">${modelData.baseline.response}</div>
@@ -1119,8 +1150,8 @@
                                     <div class="test-response improved">
                                         <div class="test-response-header">
                                             <span class="test-response-label improved">Improved (${shortName})</span>
-                                            <span class="score-badge ${modelData.improved.pass ? 'score-pass' : 'score-fail'}">
-                                                ${modelData.improved.pass ? '✅' : '❌'} ${modelData.improved.score}/5
+                                            <span class="score-badge ${modelData.improved && modelData.improved.pass ? 'score-pass' : 'score-fail'}">
+                                                ${modelData.improved ? ((modelData.improved.pass ? '✅' : '❌') + ' ' + (modelData.improved.score != null ? modelData.improved.score + '/5' : 'N/A')) : 'N/A'}
                                             </span>
                                         </div>
                                         <div class="test-response-content">${modelData.improved.response}</div>
