@@ -1076,7 +1076,7 @@
                     <td><span class="provider-badge ${providerClass}">${model.provider}</span></td>
                     <td><span class="score-badge score-fail">${model.baseline}/5</span></td>
                     <td><span class="score-badge score-pass">${model.improved}/5</span></td>
-                    <td style="color: #34d399; font-weight: 600;">+${improvement}</td>
+                    <td style="color: ${improvement >= 0 ? '#34d399' : '#ef4444'}; font-weight: 600;">${improvement >= 0 ? '+' : ''}${improvement}</td>
                 </tr>
             `;
         });
