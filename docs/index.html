@@ -694,19 +694,19 @@
         <!-- Stats Grid -->
         <div class="stats-grid">
             <div class="stat-card">
-                <div class="stat-value" id="stat-models">7</div>
+                <div class="stat-value" id="stat-models">—</div>
                 <div class="stat-label">Models Evaluated</div>
             </div>
             <div class="stat-card">
-                <div class="stat-value" id="stat-tests">350</div>
+                <div class="stat-value" id="stat-tests">—</div>
                 <div class="stat-label">Total Tests Run</div>
             </div>
             <div class="stat-card">
-                <div class="stat-value" id="stat-categories">10</div>
+                <div class="stat-value" id="stat-categories">—</div>
                 <div class="stat-label">Behavior Categories</div>
             </div>
             <div class="stat-card">
-                <div class="stat-value" id="stat-improvement">+24%</div>
+                <div class="stat-value" id="stat-improvement">—</div>
                 <div class="stat-label">Prompt Engineering Impact</div>
             </div>
         </div>
@@ -886,14 +886,7 @@
                     </select>
                     <select id="categorySelector" class="model-select" onchange="filterTests()">
                         <option value="all">All Categories</option>
-                        <option value="Context Poisoning">Context Poisoning</option>
-                        <option value="Jailbreak Resistance">Jailbreak Resistance</option>
-                        <option value="Hallucination Detection">Hallucination</option>
-                        <option value="False Premise Detection">False Premise</option>
-                        <option value="Reasoning Errors">Reasoning</option>
-                        <option value="Sycophancy">Sycophancy</option>
-                        <option value="Emotional Manipulation">Emotional Manipulation</option>
-                        <option value="Complex Instructions">Complex Instructions</option>
+                        <!-- Populated dynamically from data.js -->
                     </select>
                 </div>
             </div>
@@ -1121,7 +1114,7 @@
 
             container.innerHTML = filteredCases.map(tc => {
                 const modelKeys = modelFilter === 'all'
-                    ? Object.keys(tc.models).slice(0, 2)
+                    ? Object.keys(tc.models)
                     : [modelFilter];
 
                 return `
@@ -1168,9 +1161,64 @@
             renderTestCases();
         }
 
+        // Compute and populate stats dynamically
+        function populateStats() {
+            if (typeof testCases === 'undefined' || testCases.length === 0) return;
+
+            // Count unique models across all test cases
+            const allModels = new Set();
+            testCases.forEach(tc => Object.keys(tc.models).forEach(m => allModels.add(m)));
+            document.getElementById('stat-models').textContent = allModels.size;
+
+            // Total tests = test cases × models × prompt types (baseline + improved)
+            let totalTests = 0;
+            testCases.forEach(tc => {
+                Object.values(tc.models).forEach(m => {
+                    if (m.baseline) totalTests++;
+                    if (m.improved) totalTests++;
+                });
+            });
+            document.getElementById('stat-tests').textContent = totalTests;
+
+            // Categories
+            const categories = new Set(testCases.map(tc => tc.category));
+            document.getElementById('stat-categories').textContent = categories.size;
+
+            // Prompt engineering impact: % improvement from baseline to improved
+            let baselineSum = 0, improvedSum = 0, count = 0;
+            testCases.forEach(tc => {
+                Object.values(tc.models).forEach(m => {
+                    if (m.baseline && m.baseline.score != null && m.improved && m.improved.score != null) {
+                        baselineSum += m.baseline.score;
+                        improvedSum += m.improved.score;
+                        count++;
+                    }
+                });
+            });
+            if (count > 0 && baselineSum > 0) {
+                const impact = ((improvedSum - baselineSum) / baselineSum * 100).toFixed(0);
+                document.getElementById('stat-improvement').textContent = '+' + impact + '%';
+            }
+        }
+
+        // Populate category dropdown dynamically
+        function populateCategoryDropdown() {
+            if (typeof testCases === 'undefined' || testCases.length === 0) return;
+            const selector = document.getElementById('categorySelector');
+            const categories = [...new Set(testCases.map(tc => tc.category))].sort();
+            categories.forEach(cat => {
+                const option = document.createElement('option');
+                option.value = cat;
+                option.textContent = cat;
+                selector.appendChild(option);
+            });
+        }
+
         // Initial render - wait for DOM to be ready
         document.addEventListener('DOMContentLoaded', function () {
             if (typeof testCases !== 'undefined' && testCases.length > 0) {
+                populateStats();
+                populateCategoryDropdown();
                 renderTestCases();
             } else {
                 console.error('testCases not loaded from data.js');

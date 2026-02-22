@@ -138,10 +138,17 @@ const modelList = [
 const categoryList = [...new Set(testCases.map(tc => tc.category))].sort();
 """
     
-    # Also write to data.js for reference
+    # Write to dashboard/data.js
     OUTPUT_FILE.parent.mkdir(parents=True, exist_ok=True)
     with open(OUTPUT_FILE, 'w', encoding='utf-8') as f:
         f.write(js_data)
+    
+    # Also write to docs/data.js (where the actual dashboard index.html lives)
+    docs_output = Path(__file__).parent / "docs" / "data.js"
+    docs_output.parent.mkdir(parents=True, exist_ok=True)
+    with open(docs_output, 'w', encoding='utf-8') as f:
+        f.write(js_data)
+    print(f"✅ Also written to {docs_output}")
     
     # Inject data directly into index.html for local file access
     html_file = Path(__file__).parent / "dashboard" / "index.html"
