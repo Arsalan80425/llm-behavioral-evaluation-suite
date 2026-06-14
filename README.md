@@ -263,15 +263,6 @@ After running the scripts, inspect:
 
 Expected trend in local mock mode: the baseline prompt performs worst on citations, hallucination refusal, and jailbreak resistance; the RAG-grounded prompt performs strongest on groundedness and citation discipline.
 
-## Screenshots Placeholder
-
-Add dashboard screenshots here after running Streamlit:
-
-- Overall metrics dashboard
-- Failure case explorer
-- Prompt comparison view
-- Preference dataset preview
-
 ## Recruiter Summary
 
 - Built a prompt evaluation workflow for enterprise RAG assistants.
