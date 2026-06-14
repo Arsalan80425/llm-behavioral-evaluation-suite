@@ -34,3 +34,7 @@ Thumbs.db
 # Temporary files
 *.tmp
 *.bak
+
+# Enterprise RAG Prompt Evaluation Lab generated caches
+.streamlit/secrets.toml
+results/*.tmp

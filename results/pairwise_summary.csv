@@ -1,0 +1,4 @@
+comparison,A,B,tie
+baseline_vs_optimized,0,95,0
+optimized_vs_safety_constrained,2,0,93
+safety_constrained_vs_rag_grounded,10,8,77

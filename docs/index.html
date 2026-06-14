@@ -4,9 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LLM Behavioral Evaluation Suite | Portfolio Dashboard</title>
+    <title>LLM Evaluation & Enterprise RAG Reliability Lab</title>
     <meta name="description"
-        content="Comprehensive evaluation of AI model safety behaviors across context poisoning, jailbreak resistance, and reasoning tests.">
+        content="Unified static dashboard for LLM behavioral testing and enterprise RAG prompt reliability evaluation.">
+    <link rel="icon" href="data:,">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="data.js"></script>
@@ -675,6 +676,234 @@
             color: var(--text-secondary);
             font-style: italic;
         }
+
+        .view-mode-panel {
+            margin: -20px auto 48px;
+            max-width: 760px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .view-mode-label {
+            color: var(--text-secondary);
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .view-switcher {
+            display: flex;
+            gap: 6px;
+            padding: 6px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            backdrop-filter: blur(10px);
+        }
+
+        .view-btn {
+            border: none;
+            border-radius: 10px;
+            background: transparent;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            padding: 10px 16px;
+            transition: all 0.2s;
+        }
+
+        .view-btn.active {
+            background: var(--gradient-primary);
+            color: #ffffff;
+        }
+
+        .lab-view {
+            display: none;
+        }
+
+        .lab-view.active {
+            display: block;
+        }
+
+        .info-grid,
+        .metric-grid,
+        .prompt-grid,
+        .workflow-grid,
+        .chart-grid,
+        .command-grid {
+            display: grid;
+            gap: 20px;
+        }
+
+        .info-grid,
+        .metric-grid,
+        .prompt-grid {
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        }
+
+        .workflow-grid {
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            align-items: stretch;
+        }
+
+        .chart-grid {
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        }
+
+        .command-grid {
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        }
+
+        .rag-card,
+        .prompt-card,
+        .workflow-card,
+        .failure-card,
+        .preference-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 22px;
+            backdrop-filter: blur(10px);
+        }
+
+        .rag-card h3,
+        .prompt-card h3,
+        .workflow-card h3 {
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+
+        .rag-card p,
+        .prompt-card p,
+        .workflow-card p,
+        .failure-card p,
+        .preference-card p {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .metric-value {
+            font-size: 2rem;
+            font-weight: 700;
+            background: var(--gradient-success);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 4px;
+        }
+
+        .metric-label {
+            color: var(--text-secondary);
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .filter-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .status-message {
+            color: var(--text-secondary);
+            background: rgba(245, 158, 11, 0.08);
+            border: 1px solid rgba(245, 158, 11, 0.25);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 24px;
+        }
+
+        .failure-card,
+        .preference-card {
+            margin-bottom: 16px;
+        }
+
+        .card-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 12px 0;
+        }
+
+        .meta-pill {
+            display: inline-flex;
+            border-radius: 999px;
+            padding: 4px 10px;
+            background: rgba(59, 130, 246, 0.12);
+            color: #93c5fd;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        details {
+            margin-top: 12px;
+        }
+
+        summary {
+            cursor: pointer;
+            color: #93c5fd;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .code-block {
+            background: rgba(0, 0, 0, 0.35);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 13px;
+            line-height: 1.7;
+            overflow-x: auto;
+            padding: 16px;
+            white-space: pre-wrap;
+        }
+
+        .security-note {
+            border-color: rgba(16, 185, 129, 0.28);
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.08), rgba(59, 130, 246, 0.06));
+        }
+
+        @media (max-width: 700px) {
+            .container {
+                padding: 0 16px;
+            }
+
+            .view-switcher {
+                width: 100%;
+                flex-direction: column;
+            }
+
+            .view-btn {
+                width: 100%;
+            }
+
+            .chart-grid {
+                grid-template-columns: minmax(0, 1fr);
+            }
+
+            .chart-container {
+                padding: 16px;
+            }
+
+            .chart-wrapper {
+                overflow: hidden;
+            }
+
+            canvas {
+                max-width: 100%;
+            }
+
+            .test-case-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
     </style>
 </head>
 
@@ -684,12 +913,20 @@
         <section class="hero">
             <div class="hero-badge">
                 <span class="dot"></span>
-                Portfolio Project | Prompt Engineering
+                Portfolio Project | Static GitHub Pages Demo
             </div>
-            <h1>LLM Behavioral Evaluation Suite</h1>
-            <p>Comprehensive testing of AI model safety behaviors across context poisoning, jailbreak resistance,
-                hallucination detection, and reasoning challenges.</p>
+            <h1>LLM Evaluation & Enterprise RAG Reliability Lab</h1>
+            <p>A portfolio-grade evaluation suite for testing LLM behavior, prompt safety, RAG groundedness,
+                hallucination risk, jailbreak resistance, regression stability, and RLHF-style preference data.</p>
         </section>
+
+        <div class="view-mode-panel" aria-label="Dashboard view mode">
+            <div class="view-mode-label">View Mode:</div>
+            <div class="view-switcher">
+                <button class="view-btn active" data-view="behavioral" onclick="switchView('behavioral')">Behavioral Evaluation Suite</button>
+                <button class="view-btn" data-view="enterprise-rag" onclick="switchView('enterprise-rag')">Enterprise RAG Prompt Evaluation Lab</button>
+            </div>
+        </div>
 
         <!-- Stats Grid -->
         <div class="stats-grid">
@@ -699,18 +936,27 @@
             </div>
             <div class="stat-card">
                 <div class="stat-value" id="stat-tests">—</div>
-                <div class="stat-label">Total Tests Run</div>
+                <div class="stat-label">Behavioral Tests</div>
             </div>
             <div class="stat-card">
-                <div class="stat-value" id="stat-categories">—</div>
-                <div class="stat-label">Behavior Categories</div>
+                <div class="stat-value" id="stat-rag-tests">—</div>
+                <div class="stat-label">Enterprise RAG Test Cases</div>
             </div>
             <div class="stat-card">
-                <div class="stat-value" id="stat-improvement">—</div>
-                <div class="stat-label">Prompt Engineering Impact</div>
+                <div class="stat-value" id="stat-prompt-versions">—</div>
+                <div class="stat-label">Prompt Versions</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="stat-preference-records">—</div>
+                <div class="stat-label">Preference Records</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="stat-groq">—</div>
+                <div class="stat-label">Verified Groq Llama 70B</div>
             </div>
         </div>
 
+        <main id="behavioralView" class="lab-view active">
         <!-- Key Finding Highlight -->
         <div class="finding-highlight">
             <div class="finding-title">
@@ -746,9 +992,9 @@
                     <p class="section-subtitle">Average judge scores (1-5) across all behavioral tests</p>
                 </div>
                 <div class="toggle-group">
-                    <button class="toggle-btn active" onclick="toggleView('baseline')">Baseline</button>
-                    <button class="toggle-btn" onclick="toggleView('improved')">Improved</button>
-                    <button class="toggle-btn" onclick="toggleView('both')">Compare</button>
+                    <button class="toggle-btn active" onclick="toggleBehaviorChart('baseline', event)">Baseline</button>
+                    <button class="toggle-btn" onclick="toggleBehaviorChart('improved', event)">Improved</button>
+                    <button class="toggle-btn" onclick="toggleBehaviorChart('both', event)">Compare</button>
                 </div>
             </div>
             <div class="chart-container">
@@ -895,6 +1141,180 @@
                 <!-- Test cases will be populated by JavaScript -->
             </div>
         </section>
+        </main>
+
+        <main id="enterpriseRagView" class="lab-view">
+            <section class="section">
+                <div class="section-header">
+                    <div>
+                        <h2 class="section-title">Enterprise RAG Overview</h2>
+                        <p class="section-subtitle">Prompt-version evaluation for a fictional enterprise policy assistant</p>
+                    </div>
+                </div>
+                <div class="info-grid">
+                    <div class="rag-card">
+                        <h3>Reliability Scope</h3>
+                        <p>This module evaluates prompt versions for an enterprise RAG assistant using a fictional company policy knowledge base. It tests groundedness, citation behavior, missing-context refusal, safety, jailbreak resistance, and regression stability.</p>
+                    </div>
+                    <div class="rag-card security-note">
+                        <h3>Static Demo Boundary</h3>
+                        <p>GitHub Pages loads exported JSON only. Optional Groq Llama 3.3 70B testing is supported by the local Python pipeline, but no API keys or browser-side LLM calls are used here.</p>
+                    </div>
+                    <div class="rag-card">
+                        <h3>Data Sources</h3>
+                        <p>Static data is exported from <strong>results/eval_results.csv</strong>, <strong>results/preference_dataset.jsonl</strong>, <strong>results/failure_cases.md</strong>, <strong>results/summary_report.md</strong>, and <strong>prompts/*.md</strong>.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section">
+                <div class="section-header">
+                    <div>
+                        <h2 class="section-title">RAG Evaluation Metrics</h2>
+                        <p class="section-subtitle">Computed from the exported static evaluation results</p>
+                    </div>
+                </div>
+                <div id="ragDataStatus" class="status-message" style="display: none;"></div>
+                <div class="metric-grid" id="ragMetricGrid"></div>
+            </section>
+
+            <section class="section">
+                <div class="section-header">
+                    <div>
+                        <h2 class="section-title">Prompt Version Comparison</h2>
+                        <p class="section-subtitle">Four prompt strategies evaluated against the same enterprise policy test cases</p>
+                    </div>
+                </div>
+                <div class="prompt-grid" id="promptComparisonGrid"></div>
+            </section>
+
+            <section class="section">
+                <div class="section-header">
+                    <div>
+                        <h2 class="section-title">RAG Workflow / Architecture</h2>
+                        <p class="section-subtitle">Local deterministic mock mode plus optional secure Groq verification</p>
+                    </div>
+                </div>
+                <div class="workflow-grid">
+                    <div class="workflow-card"><h3>Enterprise Policy Knowledge Base</h3><p>Fictional policy sections for HR, privacy, support, travel, AI usage, and security.</p></div>
+                    <div class="workflow-card"><h3>Retriever</h3><p>Local deterministic retrieval selects relevant policy context and citation IDs.</p></div>
+                    <div class="workflow-card"><h3>Prompt Version</h3><p>Baseline, optimized, safety-constrained, and RAG-grounded prompts are compared.</p></div>
+                    <div class="workflow-card"><h3>LLM / Mock Generation</h3><p>Deterministic mock mode by default; optional Groq Llama 3.3 70B in local Python only.</p></div>
+                    <div class="workflow-card"><h3>Rubric Scoring</h3><p>Accuracy, groundedness, safety, refusal quality, citations, hallucination, and jailbreak checks.</p></div>
+                    <div class="workflow-card"><h3>Reports & Dashboard</h3><p>CSV, JSONL, Markdown, and static JSON exports power this GitHub Pages dashboard.</p></div>
+                </div>
+            </section>
+
+            <section class="section">
+                <div class="section-header">
+                    <div>
+                        <h2 class="section-title">Interactive RAG Dashboard</h2>
+                        <p class="section-subtitle">Filter static results and inspect prompt behavior without live API calls</p>
+                    </div>
+                </div>
+                <div class="filter-row">
+                    <select id="ragPromptFilter" class="model-select" onchange="applyRagFilters()">
+                        <option value="all">All Prompt Versions</option>
+                    </select>
+                    <select id="ragCategoryFilter" class="model-select" onchange="applyRagFilters()">
+                        <option value="all">All Categories</option>
+                    </select>
+                    <select id="ragMetricFilter" class="model-select" onchange="applyRagFilters()">
+                        <option value="overall_score">Overall Score</option>
+                        <option value="groundedness_score">Groundedness Score</option>
+                        <option value="safety_score">Safety Score</option>
+                        <option value="citation_score">Citation Score</option>
+                    </select>
+                    <select id="ragFailureFilter" class="model-select" onchange="applyRagFilters()">
+                        <option value="all">All Failure Types</option>
+                        <option value="hallucination">Hallucination Flag</option>
+                        <option value="jailbreak">Jailbreak Failure</option>
+                        <option value="citation">Citation Missing</option>
+                    </select>
+                </div>
+                <div class="chart-grid">
+                    <div class="chart-container"><div class="chart-wrapper"><canvas id="ragAverageChart"></canvas></div></div>
+                    <div class="chart-container"><div class="chart-wrapper"><canvas id="ragGroundednessChart"></canvas></div></div>
+                    <div class="chart-container"><div class="chart-wrapper"><canvas id="ragSafetyChart"></canvas></div></div>
+                    <div class="chart-container"><div class="chart-wrapper"><canvas id="ragRiskChart"></canvas></div></div>
+                    <div class="chart-container"><div class="chart-wrapper"><canvas id="ragCategoryChart"></canvas></div></div>
+                    <div class="chart-container"><div class="chart-wrapper"><canvas id="ragPreferenceChart"></canvas></div></div>
+                </div>
+            </section>
+
+            <section class="section">
+                <div class="section-header">
+                    <div>
+                        <h2 class="section-title">Failure Case Explorer</h2>
+                        <p class="section-subtitle">Searchable failed, risky, or citation-missing responses</p>
+                    </div>
+                    <input id="failureSearch" class="model-select" type="search" placeholder="Search failures" oninput="renderFailureCases()">
+                </div>
+                <div id="failureCaseContainer"></div>
+            </section>
+
+            <section class="section">
+                <div class="section-header">
+                    <div>
+                        <h2 class="section-title">RLHF-Style Preference Data Preview</h2>
+                        <p class="section-subtitle">Pairwise records that simulate preference data for prompt optimization workflows</p>
+                    </div>
+                </div>
+                <div class="rag-card" style="margin-bottom: 20px;">
+                    <p>These records simulate preference data used in RLHF-style workflows and prompt optimization. Each record compares two prompt responses for the same question, chooses a winner or tie, and stores the rationale plus scores.</p>
+                </div>
+                <div id="preferencePreviewContainer"></div>
+            </section>
+
+            <section class="section">
+                <div class="section-header">
+                    <div>
+                        <h2 class="section-title">Groq Llama 70B Verification</h2>
+                        <p class="section-subtitle">Verified locally, represented here as static exported status</p>
+                    </div>
+                </div>
+                <div class="info-grid">
+                    <div class="rag-card security-note" id="groqVerificationCard"></div>
+                    <div class="rag-card">
+                        <h3>Why the Browser Demo Is Static</h3>
+                        <p>The public GitHub Pages demo does not call Groq directly because browser-based API keys are unsafe. The full Python pipeline supports secure local Groq testing through environment variables.</p>
+                    </div>
+                    <div class="rag-card">
+                        <h3>Verification Commands</h3>
+                        <pre class="code-block">python evals/smoke_test_groq.py
+python evals/run_eval.py --provider groq --limit 1</pre>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section">
+                <div class="section-header">
+                    <div>
+                        <h2 class="section-title">Run Locally</h2>
+                        <p class="section-subtitle">Reproduce the pipeline, refresh reports, and export static GitHub Pages data</p>
+                    </div>
+                </div>
+                <div class="command-grid">
+                    <div class="rag-card">
+                        <h3>Core Evaluation</h3>
+                        <pre class="code-block">pip install -r requirements.txt
+python evals/run_eval.py --provider mock --limit 10
+python evals/pairwise_ranking.py</pre>
+                    </div>
+                    <div class="rag-card">
+                        <h3>Release Checks</h3>
+                        <pre class="code-block">python evals/regression_check.py
+python evals/safety_tests.py
+python evals/export_static_demo.py</pre>
+                    </div>
+                    <div class="rag-card">
+                        <h3>Optional Groq Smoke Test</h3>
+                        <pre class="code-block">python evals/smoke_test_groq.py
+python evals/run_eval.py --provider groq --limit 1</pre>
+                    </div>
+                </div>
+            </section>
+        </main>
 
         <!-- Footer -->
         <footer class="footer">
@@ -906,6 +1326,99 @@
     </div>
 
     <script>
+        if (typeof window.Chart === 'undefined') {
+            window.Chart = class StaticCanvasChart {
+                constructor(ctx, config) {
+                    this.ctx = ctx;
+                    this.canvas = ctx.canvas;
+                    this.config = config;
+                    this.data = config.data || { labels: [], datasets: [] };
+                    this.options = config.options || {};
+                    this.draw();
+                }
+
+                update() {
+                    this.draw();
+                }
+
+                resize() {
+                    this.draw();
+                }
+
+                destroy() {
+                    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                }
+
+                draw() {
+                    const rect = this.canvas.getBoundingClientRect();
+                    const width = Math.max(280, rect.width || this.canvas.parentElement?.clientWidth || 320);
+                    const height = Math.max(260, rect.height || this.canvas.parentElement?.clientHeight || 360);
+                    const dpr = window.devicePixelRatio || 1;
+                    this.canvas.width = Math.floor(width * dpr);
+                    this.canvas.height = Math.floor(height * dpr);
+                    this.canvas.style.width = `${width}px`;
+                    this.canvas.style.height = `${height}px`;
+                    this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+                    this.ctx.clearRect(0, 0, width, height);
+
+                    const labels = this.data.labels || [];
+                    const datasets = this.data.datasets || [];
+                    const maxValue = this.options?.scales?.y?.max || this.options?.scales?.r?.max || Math.max(5, ...datasets.flatMap(ds => ds.data || []).filter(Number.isFinite));
+                    const padding = { top: 34, right: 20, bottom: 76, left: 44 };
+                    const chartWidth = width - padding.left - padding.right;
+                    const chartHeight = height - padding.top - padding.bottom;
+
+                    this.ctx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
+                    this.ctx.fillStyle = '#a0a0b0';
+                    this.ctx.font = '12px Inter, Arial, sans-serif';
+                    for (let i = 0; i <= 5; i++) {
+                        const y = padding.top + chartHeight - (chartHeight * i / 5);
+                        this.ctx.beginPath();
+                        this.ctx.moveTo(padding.left, y);
+                        this.ctx.lineTo(width - padding.right, y);
+                        this.ctx.stroke();
+                        this.ctx.fillText(String(Math.round(maxValue * i / 5)), 8, y + 4);
+                    }
+
+                    const groupWidth = labels.length ? chartWidth / labels.length : chartWidth;
+                    const barWidth = Math.max(8, Math.min(28, (groupWidth - 12) / Math.max(1, datasets.length)));
+                    datasets.forEach((dataset, datasetIndex) => {
+                        const color = dataset.backgroundColor || dataset.borderColor || 'rgba(59, 130, 246, 0.7)';
+                        this.ctx.fillStyle = color;
+                        (dataset.data || []).forEach((value, index) => {
+                            const numeric = Number(value) || 0;
+                            const barHeight = Math.max(0, (numeric / maxValue) * chartHeight);
+                            const x = padding.left + index * groupWidth + (groupWidth - barWidth * datasets.length) / 2 + datasetIndex * barWidth;
+                            const y = padding.top + chartHeight - barHeight;
+                            this.ctx.fillRect(x, y, barWidth - 2, barHeight);
+                        });
+                    });
+
+                    this.ctx.fillStyle = '#a0a0b0';
+                    labels.forEach((label, index) => {
+                        const x = padding.left + index * groupWidth + groupWidth / 2;
+                        const text = String(label).slice(0, 18);
+                        this.ctx.save();
+                        this.ctx.translate(x, height - 52);
+                        this.ctx.rotate(-Math.PI / 5);
+                        this.ctx.textAlign = 'right';
+                        this.ctx.fillText(text, 0, 0);
+                        this.ctx.restore();
+                    });
+
+                    let legendX = padding.left;
+                    datasets.forEach(dataset => {
+                        const color = dataset.backgroundColor || dataset.borderColor || 'rgba(59, 130, 246, 0.7)';
+                        this.ctx.fillStyle = color;
+                        this.ctx.fillRect(legendX, 12, 10, 10);
+                        this.ctx.fillStyle = '#a0a0b0';
+                        this.ctx.fillText(dataset.label || 'Metric', legendX + 16, 21);
+                        legendX += Math.min(220, (dataset.label || 'Metric').length * 7 + 42);
+                    });
+                }
+            };
+        }
+
         // Compute model data dynamically from testCases (loaded from data.js)
         function computeModelData() {
             const models = [
@@ -1075,10 +1588,10 @@
         });
 
         // Toggle View Function
-        function toggleView(view) {
+        function toggleBehaviorChart(view, event) {
             const buttons = document.querySelectorAll('.toggle-btn');
             buttons.forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
+            if (event && event.target) event.target.classList.add('active');
 
             if (view === 'baseline') {
                 modelChart.data.datasets[0].hidden = false;
@@ -1180,25 +1693,7 @@
             });
             document.getElementById('stat-tests').textContent = totalTests;
 
-            // Categories
-            const categories = new Set(testCases.map(tc => tc.category));
-            document.getElementById('stat-categories').textContent = categories.size;
-
-            // Prompt engineering impact: % improvement from baseline to improved
-            let baselineSum = 0, improvedSum = 0, count = 0;
-            testCases.forEach(tc => {
-                Object.values(tc.models).forEach(m => {
-                    if (m.baseline && m.baseline.score != null && m.improved && m.improved.score != null) {
-                        baselineSum += m.baseline.score;
-                        improvedSum += m.improved.score;
-                        count++;
-                    }
-                });
-            });
-            if (count > 0 && baselineSum > 0) {
-                const impact = ((improvedSum - baselineSum) / baselineSum * 100).toFixed(0);
-                document.getElementById('stat-improvement').textContent = '+' + impact + '%';
-            }
+            // Enterprise RAG stats are populated after static JSON loads.
         }
 
         // Populate category dropdown dynamically
@@ -1214,6 +1709,377 @@
             });
         }
 
+        const ragState = {
+            summary: null,
+            evalResults: [],
+            preferences: [],
+            failures: [],
+            prompts: [],
+            charts: {},
+            filteredResults: []
+        };
+
+        function switchView(view) {
+            const normalized = view === 'enterprise-rag' ? 'enterprise-rag' : 'behavioral';
+            document.getElementById('behavioralView').classList.toggle('active', normalized === 'behavioral');
+            document.getElementById('enterpriseRagView').classList.toggle('active', normalized === 'enterprise-rag');
+            document.querySelectorAll('.view-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.view === normalized);
+            });
+            if (window.location.hash !== '#' + normalized) {
+                history.replaceState(null, '', '#' + normalized);
+            }
+            if (normalized === 'enterprise-rag') {
+                Object.values(ragState.charts).forEach(chart => chart && chart.resize());
+            }
+        }
+
+        function escapeHtml(value) {
+            return String(value ?? '').replace(/[&<>"']/g, char => ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#39;'
+            }[char]));
+        }
+
+        function formatNumber(value, suffix = '') {
+            if (value === null || value === undefined || Number.isNaN(Number(value))) return 'N/A';
+            return `${Number(value).toFixed(Number(value) % 1 === 0 ? 0 : 1)}${suffix}`;
+        }
+
+        function formatScore(value) {
+            return value === null || value === undefined ? 'N/A' : `${Number(value).toFixed(2)}/5`;
+        }
+
+        function formatRate(value) {
+            return value === null || value === undefined ? 'N/A' : `${Number(value).toFixed(1)}%`;
+        }
+
+        async function fetchJsonOrNull(path) {
+            try {
+                const response = await fetch(path, { cache: 'no-store' });
+                if (!response.ok) return null;
+                return await response.json();
+            } catch (_) {
+                return null;
+            }
+        }
+
+        async function loadEnterpriseData() {
+            const [summary, evalResults, preferences, failures, prompts] = await Promise.all([
+                fetchJsonOrNull('data/rag_summary_report.json'),
+                fetchJsonOrNull('data/rag_eval_results.json'),
+                fetchJsonOrNull('data/rag_preference_dataset.json'),
+                fetchJsonOrNull('data/rag_failure_cases.json'),
+                fetchJsonOrNull('data/rag_prompts.json')
+            ]);
+
+            if (!summary || !Array.isArray(evalResults)) {
+                const status = document.getElementById('ragDataStatus');
+                status.style.display = 'block';
+                status.textContent = 'Enterprise RAG data not found. Run python evals/export_static_demo.py and commit the generated JSON files.';
+                return;
+            }
+
+            ragState.summary = summary;
+            ragState.evalResults = evalResults;
+            ragState.preferences = Array.isArray(preferences) ? preferences : [];
+            ragState.failures = Array.isArray(failures) ? failures : [];
+            ragState.prompts = Array.isArray(prompts) ? prompts : [];
+            ragState.filteredResults = evalResults;
+
+            renderHeroStats();
+            renderRagMetrics();
+            renderPromptComparison();
+            populateRagFilters();
+            applyRagFilters();
+            renderFailureCases();
+            renderPreferencePreview();
+            renderGroqVerification();
+        }
+
+        function renderHeroStats() {
+            const counts = ragState.summary?.counts || {};
+            const verification = ragState.summary?.groq_verification || {};
+            document.getElementById('stat-rag-tests').textContent = counts.enterprise_rag_test_cases ?? 'N/A';
+            document.getElementById('stat-prompt-versions').textContent = counts.prompt_versions ?? 'N/A';
+            document.getElementById('stat-preference-records').textContent = counts.preference_records ?? 'N/A';
+            document.getElementById('stat-groq').textContent = verification.used_real_llm ? 'Yes' : 'Static';
+        }
+
+        function renderRagMetrics() {
+            const overall = ragState.summary?.overall || {};
+            const metrics = [
+                ['Overall average score', formatScore(overall.average_score)],
+                ['Groundedness score', formatScore(overall.groundedness_score)],
+                ['Safety score', formatScore(overall.safety_score)],
+                ['Hallucination rate', formatRate(overall.hallucination_rate)],
+                ['Jailbreak failure rate', formatRate(overall.jailbreak_failure_rate)],
+                ['Citation pass rate', formatRate(overall.citation_pass_rate)],
+                ['Regression pass rate', formatRate(overall.regression_pass_rate)],
+                ['Pairwise preference records', overall.pairwise_preference_records ?? 'N/A']
+            ];
+            document.getElementById('ragMetricGrid').innerHTML = metrics.map(([label, value]) => `
+                <div class="rag-card">
+                    <div class="metric-value">${escapeHtml(value)}</div>
+                    <div class="metric-label">${escapeHtml(label)}</div>
+                </div>
+            `).join('');
+        }
+
+        function renderPromptComparison() {
+            const prompts = ragState.prompts.length ? ragState.prompts : (ragState.summary?.by_prompt || []);
+            document.getElementById('promptComparisonGrid').innerHTML = prompts.map(prompt => {
+                const metrics = prompt.metrics || prompt;
+                return `
+                    <div class="prompt-card">
+                        <h3>${escapeHtml(prompt.label || prompt.prompt_version)}</h3>
+                        <p>${escapeHtml(prompt.description || '')}</p>
+                        <div class="card-meta">
+                            <span class="meta-pill">Avg ${formatScore(metrics.average_score)}</span>
+                            <span class="meta-pill">Grounded ${formatScore(metrics.groundedness_score)}</span>
+                            <span class="meta-pill">Safety ${formatScore(metrics.safety_score)}</span>
+                            <span class="meta-pill">Hallucination ${formatRate(metrics.hallucination_rate)}</span>
+                            <span class="meta-pill">Citations ${formatRate(metrics.citation_pass_rate)}</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function populateRagFilters() {
+            const promptFilter = document.getElementById('ragPromptFilter');
+            const categoryFilter = document.getElementById('ragCategoryFilter');
+            const prompts = [...new Set(ragState.evalResults.map(row => row.prompt_version).filter(Boolean))];
+            const categories = [...new Set(ragState.evalResults.map(row => row.category).filter(Boolean))];
+
+            prompts.forEach(prompt => {
+                const option = document.createElement('option');
+                option.value = prompt;
+                option.textContent = prompt.replaceAll('_', ' ');
+                promptFilter.appendChild(option);
+            });
+            categories.forEach(category => {
+                const option = document.createElement('option');
+                option.value = category;
+                option.textContent = category.replaceAll('_', ' ');
+                categoryFilter.appendChild(option);
+            });
+        }
+
+        function applyRagFilters() {
+            const prompt = document.getElementById('ragPromptFilter').value;
+            const category = document.getElementById('ragCategoryFilter').value;
+            const failure = document.getElementById('ragFailureFilter').value;
+            ragState.filteredResults = ragState.evalResults.filter(row => {
+                if (prompt !== 'all' && row.prompt_version !== prompt) return false;
+                if (category !== 'all' && row.category !== category) return false;
+                if (failure === 'hallucination' && row.hallucination_flag !== true) return false;
+                if (failure === 'jailbreak' && row.jailbreak_failure_flag !== true) return false;
+                if (failure === 'citation' && Number(row.citation_score) !== 0) return false;
+                return true;
+            });
+            renderRagCharts();
+            renderFailureCases();
+        }
+
+        function average(rows, field) {
+            const values = rows.map(row => Number(row[field])).filter(value => Number.isFinite(value));
+            return values.length ? values.reduce((sum, value) => sum + value, 0) / values.length : null;
+        }
+
+        function percent(rows, predicate) {
+            return rows.length ? (rows.filter(predicate).length / rows.length) * 100 : null;
+        }
+
+        function groupedRows(rows, field) {
+            return rows.reduce((acc, row) => {
+                const key = row[field] || 'unknown';
+                acc[key] = acc[key] || [];
+                acc[key].push(row);
+                return acc;
+            }, {});
+        }
+
+        function buildMetricSeries(rows, groupField, metricField) {
+            const grouped = groupedRows(rows, groupField);
+            const labels = Object.keys(grouped).sort();
+            return {
+                labels,
+                data: labels.map(label => average(grouped[label], metricField))
+            };
+        }
+
+        function chartOptions(max = 5) {
+            return {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { labels: { color: '#a0a0b0' } } },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max,
+                        grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                        ticks: { color: '#a0a0b0' }
+                    },
+                    x: {
+                        grid: { display: false },
+                        ticks: { color: '#a0a0b0' }
+                    }
+                }
+            };
+        }
+
+        function upsertBarChart(key, canvasId, label, labels, data, color, max = 5) {
+            if (ragState.charts[key]) ragState.charts[key].destroy();
+            const ctx = document.getElementById(canvasId).getContext('2d');
+            ragState.charts[key] = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels,
+                    datasets: [{ label, data, backgroundColor: color, borderColor: color.replace('0.65', '1'), borderWidth: 1 }]
+                },
+                options: chartOptions(max)
+            });
+        }
+
+        function renderRagCharts() {
+            const rows = ragState.filteredResults.length ? ragState.filteredResults : ragState.evalResults;
+            const byPromptAverage = buildMetricSeries(rows, 'prompt_version', 'overall_score');
+            const byPromptGrounded = buildMetricSeries(rows, 'prompt_version', 'groundedness_score');
+            const byPromptSafety = buildMetricSeries(rows, 'prompt_version', 'safety_score');
+            const byCategory = buildMetricSeries(rows, 'category', document.getElementById('ragMetricFilter').value);
+            const promptGroups = groupedRows(rows, 'prompt_version');
+            const riskLabels = Object.keys(promptGroups).sort();
+            const preferenceSummary = ragState.summary?.preference_summary?.comparisons || [];
+
+            upsertBarChart('average', 'ragAverageChart', 'Average score by prompt version', byPromptAverage.labels, byPromptAverage.data, 'rgba(59, 130, 246, 0.65)');
+            upsertBarChart('groundedness', 'ragGroundednessChart', 'Groundedness by prompt version', byPromptGrounded.labels, byPromptGrounded.data, 'rgba(16, 185, 129, 0.65)');
+            upsertBarChart('safety', 'ragSafetyChart', 'Safety by prompt version', byPromptSafety.labels, byPromptSafety.data, 'rgba(139, 92, 246, 0.65)');
+            upsertBarChart('category', 'ragCategoryChart', 'Category-level performance', byCategory.labels, byCategory.data, 'rgba(245, 158, 11, 0.65)');
+
+            if (ragState.charts.risk) ragState.charts.risk.destroy();
+            ragState.charts.risk = new Chart(document.getElementById('ragRiskChart').getContext('2d'), {
+                type: 'bar',
+                data: {
+                    labels: riskLabels,
+                    datasets: [
+                        {
+                            label: 'Hallucination rate',
+                            data: riskLabels.map(label => percent(promptGroups[label], row => row.hallucination_flag === true)),
+                            backgroundColor: 'rgba(239, 68, 68, 0.65)'
+                        },
+                        {
+                            label: 'Jailbreak failure rate',
+                            data: riskLabels.map(label => percent(promptGroups[label], row => row.jailbreak_failure_flag === true)),
+                            backgroundColor: 'rgba(245, 158, 11, 0.65)'
+                        }
+                    ]
+                },
+                options: chartOptions(100)
+            });
+
+            upsertBarChart(
+                'preference',
+                'ragPreferenceChart',
+                'Pairwise B win rate',
+                preferenceSummary.map(item => item.comparison.replaceAll('_', ' ')),
+                preferenceSummary.map(item => item.winner_b_rate),
+                'rgba(6, 182, 212, 0.65)',
+                100
+            );
+        }
+
+        function renderFailureCases() {
+            const search = (document.getElementById('failureSearch')?.value || '').toLowerCase();
+            const prompt = document.getElementById('ragPromptFilter')?.value || 'all';
+            const category = document.getElementById('ragCategoryFilter')?.value || 'all';
+            const failures = ragState.failures.filter(row => {
+                if (prompt !== 'all' && row.prompt_version !== prompt) return false;
+                if (category !== 'all' && row.category !== category) return false;
+                const haystack = `${row.case_id} ${row.category} ${row.prompt_version} ${row.question} ${row.response}`.toLowerCase();
+                return !search || haystack.includes(search);
+            }).slice(0, 12);
+
+            const container = document.getElementById('failureCaseContainer');
+            if (!failures.length) {
+                container.innerHTML = '<div class="status-message">No failure cases match the current filters.</div>';
+                return;
+            }
+
+            container.innerHTML = failures.map(row => `
+                <div class="failure-card">
+                    <div class="test-case-header">
+                        <div class="test-case-title">${escapeHtml(row.case_id)}</div>
+                        <span class="test-case-category">${escapeHtml(row.category)}</span>
+                    </div>
+                    <p><strong>Question:</strong> ${escapeHtml(row.question)}</p>
+                    <div class="card-meta">
+                        <span class="meta-pill">${escapeHtml(row.prompt_version)}</span>
+                        <span class="meta-pill" style="background:rgba(239,68,68,0.15);color:#f87171;border-color:rgba(239,68,68,0.3);">⚠ ${escapeHtml(row.failure_reason || 'below threshold')}</span>
+                        <span class="meta-pill">Overall ${formatScore(row.overall_score)}</span>
+                        <span class="meta-pill">Citation ${formatNumber(row.citation_score)}</span>
+                        <span class="meta-pill">Hallucination ${row.hallucination_flag ? 'Yes' : 'No'}</span>
+                        <span class="meta-pill">Jailbreak ${row.jailbreak_failure_flag ? 'Yes' : 'No'}</span>
+                    </div>
+                    <details>
+                        <summary>Response and scores</summary>
+                        <pre class="code-block">${escapeHtml(row.response)}</pre>
+                        <div class="card-meta">
+                            <span class="meta-pill">Groundedness ${formatScore(row.groundedness_score)}</span>
+                            <span class="meta-pill">Safety ${formatScore(row.safety_score)}</span>
+                            <span class="meta-pill">Accuracy ${formatScore(row.accuracy_score)}</span>
+                        </div>
+                    </details>
+                </div>
+            `).join('');
+
+        }
+
+        function renderPreferencePreview() {
+            const records = ragState.preferences.slice(0, 6);
+            const container = document.getElementById('preferencePreviewContainer');
+            if (!records.length) {
+                container.innerHTML = '<div class="status-message">No preference records found. Run python evals/pairwise_ranking.py and python evals/export_static_demo.py.</div>';
+                return;
+            }
+
+            container.innerHTML = records.map(record => `
+                <div class="preference-card">
+                    <div class="test-case-header">
+                        <div class="test-case-title">${escapeHtml(record.case_id)} - ${escapeHtml(record.comparison)}</div>
+                        <span class="test-case-category">Winner: ${escapeHtml(record.winner)}</span>
+                    </div>
+                    <p><strong>Question:</strong> ${escapeHtml(record.question)}</p>
+                    <p><strong>Rationale:</strong> ${escapeHtml(record.rationale)}</p>
+                    <details>
+                        <summary>Responses and scores</summary>
+                        <pre class="code-block">Response A:
+${escapeHtml(record.response_a)}
+
+Response B:
+${escapeHtml(record.response_b)}
+
+Scores:
+${escapeHtml(JSON.stringify(record.scores, null, 2))}</pre>
+                    </details>
+                </div>
+            `).join('');
+        }
+
+        function renderGroqVerification() {
+            const verification = ragState.summary?.groq_verification || {};
+            document.getElementById('groqVerificationCard').innerHTML = `
+                <h3>Local Verification Result</h3>
+                <pre class="code-block">model_used: ${escapeHtml(verification.model_used || 'groq:llama-3.3-70b-versatile')}
+used_real_llm: ${verification.used_real_llm ? 'True' : 'False'}
+error: ${verification.error === null ? 'None' : escapeHtml(verification.error || 'None')}</pre>
+                <p>Optional real LLM generation was verified locally using Groq Llama 3.3 70B, then exported as static dashboard data.</p>
+            `;
+        }
+
         // Initial render - wait for DOM to be ready
         document.addEventListener('DOMContentLoaded', function () {
             if (typeof testCases !== 'undefined' && testCases.length > 0) {
@@ -1223,6 +2089,8 @@
             } else {
                 console.error('testCases not loaded from data.js');
             }
+            loadEnterpriseData();
+            switchView(window.location.hash === '#enterprise-rag' ? 'enterprise-rag' : 'behavioral');
         });
     </script>
 </body>

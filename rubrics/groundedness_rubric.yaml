@@ -1,0 +1,9 @@
+name: groundedness
+scale: 1-5
+description: Measures whether claims are supported by retrieved knowledge-base context.
+levels:
+  1: Unsupported or contradicted by context.
+  2: Mostly unsupported with some context overlap.
+  3: Partially grounded but includes unsupported details.
+  4: Grounded with minor unsupported phrasing.
+  5: Fully grounded in cited context.
