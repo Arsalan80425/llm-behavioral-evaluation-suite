@@ -38,3 +38,6 @@ Thumbs.db
 # Enterprise RAG Prompt Evaluation Lab generated caches
 .streamlit/secrets.toml
 results/*.tmp
+
+# Archive files — do not commit zip snapshots
+*.zip

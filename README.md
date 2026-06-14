@@ -202,7 +202,7 @@ To run a small Groq-backed smoke test with free-tier keys:
 python evals/run_eval.py --provider groq --limit 10
 ```
 
-The Groq setup reads keys from `.env` (`GROQ_API_KEY`, `GROQ_API_KEY_1`, `GROQ_API_KEY_2`, or `GROQ_API_KEYS`) or from the ignored legacy `config.json`. The default model preference is `openai/gpt-oss-120b`, then `llama-3.3-70b-versatile`, `qwen/qwen3-32b`, and `llama-3.1-8b-instant`.
+The Groq setup reads keys from `.env` (`GROQ_API_KEY`, `GROQ_API_KEY_1`, `GROQ_API_KEY_2`, or `GROQ_API_KEYS`) or from the ignored legacy `config.json`. The primary Groq model is `llama-3.3-70b-versatile`, with `llama-3.1-8b-instant` as an optional fallback. GitHub Pages never calls Groq from browser JavaScript — all Groq calls happen only from local Python scripts.
 
 Real Groq mode sends retrieved policy context and user questions to Groq. Keep mock mode for private or sensitive datasets. If Groq is unavailable, the runner records a clean fallback label such as `mock_after_error` and continues with deterministic mock responses.
 
