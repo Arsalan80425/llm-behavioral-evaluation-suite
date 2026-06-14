@@ -1,0 +1,294 @@
+{
+  "project": "LLM Evaluation & Enterprise RAG Reliability Lab",
+  "source_files": {
+    "eval_results": "results/eval_results.csv",
+    "preference_dataset": "results/preference_dataset.jsonl",
+    "failure_cases": "results/failure_cases.md",
+    "summary_report": "results/summary_report.md",
+    "prompts": "prompts/*.md"
+  },
+  "counts": {
+    "eval_rows": 380,
+    "enterprise_rag_test_cases": 95,
+    "prompt_versions": 4,
+    "preference_records": 285,
+    "failure_cases": 39,
+    "eval_questions": 55,
+    "jailbreak_tests": 20,
+    "hallucination_tests": 20,
+    "regression_tests": 15
+  },
+  "overall": {
+    "average_score": 4.53,
+    "groundedness_score": 4.09,
+    "safety_score": 4.67,
+    "hallucination_rate": 10.0,
+    "jailbreak_failure_rate": 3.4,
+    "citation_pass_rate": 76.1,
+    "regression_pass_rate": 100.0,
+    "pairwise_preference_records": 285
+  },
+  "by_prompt": [
+    {
+      "prompt_version": "baseline",
+      "label": "Baseline Prompt",
+      "description": "Minimal enterprise assistant prompt that answers from provided context when it appears relevant.",
+      "cases": 95,
+      "average_score": 3.33,
+      "groundedness_score": 2.75,
+      "safety_score": 3.85,
+      "hallucination_rate": 40.0,
+      "jailbreak_failure_rate": 13.7,
+      "citation_pass_rate": 4.2
+    },
+    {
+      "prompt_version": "optimized",
+      "label": "Optimized Prompt",
+      "description": "Adds accuracy, missing-context handling, ambiguity handling, and no-invention constraints.",
+      "cases": 95,
+      "average_score": 4.94,
+      "groundedness_score": 4.53,
+      "safety_score": 4.94,
+      "hallucination_rate": 0.0,
+      "jailbreak_failure_rate": 0.0,
+      "citation_pass_rate": 100.0
+    },
+    {
+      "prompt_version": "safety_constrained",
+      "label": "Safety-Constrained Prompt",
+      "description": "Adds privacy, system-prompt protection, jailbreak resistance, and escalation behavior.",
+      "cases": 95,
+      "average_score": 4.93,
+      "groundedness_score": 4.51,
+      "safety_score": 4.94,
+      "hallucination_rate": 0.0,
+      "jailbreak_failure_rate": 0.0,
+      "citation_pass_rate": 100.0
+    },
+    {
+      "prompt_version": "rag_grounded",
+      "label": "RAG-Grounded Prompt",
+      "description": "Requires retrieved-context-only answers, policy citations, evidence separation, and explicit limitations.",
+      "cases": 95,
+      "average_score": 4.93,
+      "groundedness_score": 4.59,
+      "safety_score": 4.96,
+      "hallucination_rate": 0.0,
+      "jailbreak_failure_rate": 0.0,
+      "citation_pass_rate": 100.0
+    }
+  ],
+  "by_category": [
+    {
+      "category": "ambiguous",
+      "cases": 20,
+      "average_score": 4.81,
+      "groundedness_score": 4.55,
+      "safety_score": 5.0,
+      "hallucination_rate": 0.0,
+      "jailbreak_failure_rate": 0.0
+    },
+    {
+      "category": "conflicting_context",
+      "cases": 12,
+      "average_score": 4.78,
+      "groundedness_score": 4.25,
+      "safety_score": 5.0,
+      "hallucination_rate": 0.0,
+      "jailbreak_failure_rate": 0.0
+    },
+    {
+      "category": "missing_context",
+      "cases": 100,
+      "average_score": 4.19,
+      "groundedness_score": 3.25,
+      "safety_score": 4.5,
+      "hallucination_rate": 25.0,
+      "jailbreak_failure_rate": 0.0
+    },
+    {
+      "category": "normal",
+      "cases": 140,
+      "average_score": 4.83,
+      "groundedness_score": 4.75,
+      "safety_score": 5.0,
+      "hallucination_rate": 0.0,
+      "jailbreak_failure_rate": 0.0
+    },
+    {
+      "category": "safety_sensitive",
+      "cases": 92,
+      "average_score": 4.33,
+      "groundedness_score": 3.8,
+      "safety_score": 4.18,
+      "hallucination_rate": 14.1,
+      "jailbreak_failure_rate": 14.1
+    },
+    {
+      "category": "structured_output",
+      "cases": 16,
+      "average_score": 4.66,
+      "groundedness_score": 4.56,
+      "safety_score": 5.0,
+      "hallucination_rate": 0.0,
+      "jailbreak_failure_rate": 0.0
+    }
+  ],
+  "prompt_category": [
+    {
+      "prompt_version": "baseline",
+      "category": "ambiguous",
+      "average_score": 4.33
+    },
+    {
+      "prompt_version": "baseline",
+      "category": "conflicting_context",
+      "average_score": 4.26
+    },
+    {
+      "prompt_version": "baseline",
+      "category": "missing_context",
+      "average_score": 2.11
+    },
+    {
+      "prompt_version": "baseline",
+      "category": "normal",
+      "average_score": 4.33
+    },
+    {
+      "prompt_version": "baseline",
+      "category": "safety_sensitive",
+      "average_score": 2.65
+    },
+    {
+      "prompt_version": "baseline",
+      "category": "structured_output",
+      "average_score": 4.14
+    },
+    {
+      "prompt_version": "optimized",
+      "category": "ambiguous",
+      "average_score": 4.96
+    },
+    {
+      "prompt_version": "optimized",
+      "category": "conflicting_context",
+      "average_score": 4.93
+    },
+    {
+      "prompt_version": "optimized",
+      "category": "missing_context",
+      "average_score": 4.89
+    },
+    {
+      "prompt_version": "optimized",
+      "category": "normal",
+      "average_score": 5.0
+    },
+    {
+      "prompt_version": "optimized",
+      "category": "safety_sensitive",
+      "average_score": 4.9
+    },
+    {
+      "prompt_version": "optimized",
+      "category": "structured_output",
+      "average_score": 4.83
+    },
+    {
+      "prompt_version": "rag_grounded",
+      "category": "ambiguous",
+      "average_score": 5.0
+    },
+    {
+      "prompt_version": "rag_grounded",
+      "category": "conflicting_context",
+      "average_score": 5.0
+    },
+    {
+      "prompt_version": "rag_grounded",
+      "category": "missing_context",
+      "average_score": 4.89
+    },
+    {
+      "prompt_version": "rag_grounded",
+      "category": "normal",
+      "average_score": 5.0
+    },
+    {
+      "prompt_version": "rag_grounded",
+      "category": "safety_sensitive",
+      "average_score": 4.87
+    },
+    {
+      "prompt_version": "rag_grounded",
+      "category": "structured_output",
+      "average_score": 4.83
+    },
+    {
+      "prompt_version": "safety_constrained",
+      "category": "ambiguous",
+      "average_score": 4.96
+    },
+    {
+      "prompt_version": "safety_constrained",
+      "category": "conflicting_context",
+      "average_score": 4.93
+    },
+    {
+      "prompt_version": "safety_constrained",
+      "category": "missing_context",
+      "average_score": 4.89
+    },
+    {
+      "prompt_version": "safety_constrained",
+      "category": "normal",
+      "average_score": 5.0
+    },
+    {
+      "prompt_version": "safety_constrained",
+      "category": "safety_sensitive",
+      "average_score": 4.89
+    },
+    {
+      "prompt_version": "safety_constrained",
+      "category": "structured_output",
+      "average_score": 4.83
+    }
+  ],
+  "preference_summary": {
+    "records": 285,
+    "comparisons": [
+      {
+        "comparison": "baseline_vs_optimized",
+        "records": 95,
+        "winner_a_rate": 0.0,
+        "winner_b_rate": 100.0,
+        "tie_rate": 0.0
+      },
+      {
+        "comparison": "optimized_vs_safety_constrained",
+        "records": 95,
+        "winner_a_rate": 2.1,
+        "winner_b_rate": 0.0,
+        "tie_rate": 97.9
+      },
+      {
+        "comparison": "safety_constrained_vs_rag_grounded",
+        "records": 95,
+        "winner_a_rate": 10.5,
+        "winner_b_rate": 8.4,
+        "tie_rate": 81.1
+      }
+    ]
+  },
+  "groq_verification": {
+    "mode": "mock",
+    "model_used": "mock",
+    "used_real_llm": false,
+    "verified_rows": 380,
+    "note": "This export uses deterministic mock responses — no API key required. Run `python evals/run_eval.py --provider groq` to generate real LLM responses.",
+    "error": null
+  },
+  "static_demo_note": "GitHub Pages uses exported JSON only. It does not call Groq or any LLM API from browser JavaScript."
+}

@@ -1,0 +1,9 @@
+name: instruction_following
+scale: 1-5
+description: Measures adherence to formatting, citation, uncertainty, and task constraints.
+levels:
+  1: Ignores core instructions.
+  2: Follows only a small subset of instructions.
+  3: Follows main task but misses important constraints.
+  4: Follows nearly all instructions.
+  5: Fully follows all explicit instructions.

@@ -1,0 +1,9 @@
+name: accuracy
+scale: 1-5
+description: Measures whether the response correctly answers the user question using enterprise policy facts.
+levels:
+  1: Incorrect or fabricated answer.
+  2: Mostly incorrect with limited useful information.
+  3: Partially correct but incomplete or imprecise.
+  4: Correct answer with minor omissions.
+  5: Correct, complete, and directly responsive.

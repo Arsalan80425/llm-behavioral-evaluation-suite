@@ -1,5 +1,11 @@
-ollama
+streamlit
 pandas
+numpy
+scikit-learn
+pyyaml
+plotly
+python-dotenv
 rich
 python-dateutil
+ollama
 groq
